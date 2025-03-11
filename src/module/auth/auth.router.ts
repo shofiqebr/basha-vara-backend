@@ -4,10 +4,18 @@ import { UserValidation } from "../user/user.validation";
 import { AuthControllers } from "./auth.controller";
 import { AuthValidation } from "./auth.validation";
 
-const authRouter = Router()
+const authRouter = Router();
 
-authRouter.post("/api/auth/register",validateRequest(UserValidation.userValidationSchema),AuthControllers.register)
-authRouter.get('/api/auth/getAllUsers', AuthControllers.getAllUsers);
-authRouter.post('/api/auth/login', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.login);
-authRouter.post('/api/auth/logout', AuthControllers.logout);
+// Register a new user
+authRouter.post("/api/auth/register", validateRequest(UserValidation.userValidationSchema), AuthControllers.register);
+
+// Get all users (Consider adding pagination or query filters)
+authRouter.get("/api/auth/users", AuthControllers.getAllUsers);
+
+// User login
+authRouter.post("/api/auth/login", validateRequest(AuthValidation.loginValidationSchema), AuthControllers.login);
+
+// User logout
+authRouter.post("/api/auth/logout", AuthControllers.logout);
+
 export default authRouter;

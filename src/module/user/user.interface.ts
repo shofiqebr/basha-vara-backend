@@ -1,18 +1,17 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { Model } from "mongoose";
-import { USER_ROLE } from "./user.constrants";
 
-export interface IUser  {
-    name: string;
-    email: string;
-    password: string;
-    role: USER_ROLE;
-    phone?: string;
-    address?: string;
-    city?: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }
-
+export interface IUser {
+  name: string;
+  email: string;
+  phone: string;
+  password: string; // Hashed password
+  role: "admin" | "landlord" | "tenant";
+  address?: string;
+  city?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
   export interface IUserMethods {
     comparePassword(candidatePassword: string): Promise<boolean>;

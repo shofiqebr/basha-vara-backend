@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { USER_ROLE } from "./user.constrants";
 
 const userValidationSchema = z.object({
   body: z.object({
@@ -7,15 +6,14 @@ const userValidationSchema = z.object({
 
     email: z.string().email({ message: "Invalid email format" }),
 
-    role: z
-      .enum(Object.values(USER_ROLE) as [string, ...string[]])
-      .default("customer")
-      .optional(),
+    password: z
+      .string()
+      .min(3, { message: "Password must be at least 3 characters long" }),
+
+    role: z.enum(["admin", "landlord", "tenant"]).default("tenant").optional(),
 
     phone: z
-      .string()
-      // .regex(/^\d{3,15}$/, { message: "Phone number must be 3-15 digits" })
-      .optional(),
+      .string().optional(),
 
     address: z.string().max(100, { message: "Address cannot exceed 100 characters" }).optional(),
 
@@ -26,6 +24,7 @@ const userValidationSchema = z.object({
 const loginValidationSchema = z.object({
   body: z.object({
     email: z.string().email({ message: "Invalid email format" }),
+    password: z.string().min(3, { message: "Password is required" }),
   }),
 });
 
