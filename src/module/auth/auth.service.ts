@@ -27,7 +27,7 @@ const login = async (payload: { email: string; password: string }) => {
     }
 
     const isPasswordMatched = await bcrypt.compare(payload?.password, user?.password);
-    console.log(isPasswordMatched, payload?.password, user?.password)
+    // console.log(isPasswordMatched, payload?.password, user?.password)
     if (!isPasswordMatched) {
         throw new Error("Wrong password!!!");
     }

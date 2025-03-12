@@ -24,6 +24,20 @@ const UserSchema = new Schema<IUser, mongoose.Model<IUser, {}, IUserMethods>, IU
     phone: { type: String, required: true },
     address: { type: String, default: "N/A" },
     city: { type: String, default: "N/A" },
+    
+    // Add rentalRequests field for tenants
+    rentalRequests: [
+      {
+        listingId: { type: String, required: true },
+        status: {
+          type: String,
+          enum: ["pending", "approved", "rejected"],
+          default: "pending",
+        },
+        additionalMessage: { type: String },
+        landlordPhoneNumber: { type: String },
+      }
+    ],
   },
   {
     timestamps: true,

@@ -2,6 +2,8 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import authRouter from './module/auth/auth.router';
 import cookieParser from "cookie-parser";
+import tenantRouter from './module/tenant/tenant.router';
+import landlordRouter from './module/landLord/landLord.router';
 
 const app: Application = express();
 
@@ -30,6 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use(authRouter);
+app.use(tenantRouter);
+app.use(landlordRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send("Hello from basha vara");
