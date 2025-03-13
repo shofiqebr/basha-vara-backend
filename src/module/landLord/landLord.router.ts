@@ -27,11 +27,11 @@ landlordRouter.put(
 landlordRouter.delete("/api/landlords/listings/:id", LandlordControllers.deleteListing);
 
 // Get all rental requests for the listings posted by the landlord
-landlordRouter.get("/api/landlords/requests", LandlordControllers.getAllRentalRequests);
+landlordRouter.get("/api/landlords/requests", LandlordControllers.getRentalRequests);
 
 // Respond to a rental request (approve/reject)
 landlordRouter.put(
-  "/api/landlords/requests/:id",
+  "/api/landlords/requests/:requestId",
   validateRequest(ListingValidation.respondToRequestValidationSchema), // Assuming you will validate request responses
   LandlordControllers.respondToRentalRequest
 );

@@ -40,7 +40,7 @@ const respondToRequestValidationSchema = z.object({
     }),
     phoneNumber: z
       .string()
-      .min(10, { message: "Phone number must be at least 10 characters long" })
+      .min(10, { message: "Phone number must be at least 6 characters long" })
       .optional(),
   }),
 });

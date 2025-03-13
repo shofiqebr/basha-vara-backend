@@ -2,6 +2,7 @@ import express from "express";
 import { TenantControllers } from "./tenant.controller";
 
 
+
 const tenantRouter = express.Router();
 
 // Create a new tenant
@@ -14,7 +15,10 @@ const tenantRouter = express.Router();
 tenantRouter.post("/api/tenants/requests", TenantControllers.createRentalRequest);
 
 // Get all rental requests made by a tenant
-tenantRouter.get("/api/tenants/requests", TenantControllers.getRentalRequests);
+// tenantRouter.get("/api/tenants/requests", TenantControllers.getRentalRequests);
+tenantRouter.get("/api/tenants/requests", TenantControllers.getAllRentalRequests);
+
+tenantRouter.put("/api/tenants/profile", TenantControllers.updateTenantProfile);
 
 // Update tenant profile
 // tenantRouter.put("/api/tenants/profile/:userId", TenantControllers.updateTenantProfile);

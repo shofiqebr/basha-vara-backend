@@ -81,6 +81,18 @@ const createRentalRequest = catchAsync(async (req: Request, res: Response) => {
     }
 });
 
+const getAllRentalRequests = catchAsync(async (req: Request, res: Response) => {
+    const result = await TenantService.getAllRentalRequests();
+
+    sendResponse(res, {
+        status: true,
+        message: "All rental requests fetched successfully",
+        statusCode: StatusCodes.OK,
+        data: result,
+    });
+});
+
+
 // Controller for fetching all rental requests of a tenant
 const getRentalRequests = catchAsync(async (req: Request, res: Response) => {
     const result = await TenantService.getRentalRequests(req.query.tenantId as string);
@@ -92,6 +104,25 @@ const getRentalRequests = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+
+const updateTenantProfile = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { tenantId, ...updateData } = req.body;
+
+    if (!tenantId) {
+        res.status(StatusCodes.BAD_REQUEST).json({ message: "Tenant ID is required" });
+        return;
+    }
+
+    const result = await TenantService.updateTenantProfile(tenantId, updateData);
+
+    sendResponse(res, {
+        status: true,
+        message: "Tenant profile updated successfully",
+        statusCode: StatusCodes.OK,
+        data: result,
+    });
+});
+
 
 // Controller for updating a rental request
 // const updateRentalRequest = catchAsync(async (req: Request, res: Response) => {
@@ -123,6 +154,8 @@ export const TenantControllers = {
     // updateTenantProfile,
     createRentalRequest,
     getRentalRequests,
+    getAllRentalRequests,
+    updateTenantProfile,
     // updateRentalRequest,
     // deleteRentalRequest,
 };

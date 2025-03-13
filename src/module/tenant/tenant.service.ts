@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-useless-catch */
 
 import { BadRequestError, NotFoundError } from "../../errors/errors";
+import ListingModel from "../landLord/landLord.model";
 import User from "../user/user.model";
 // import { Tenant } from "./tenant.interface";
 // import TenantModel from "./tenant.model";
@@ -36,36 +38,80 @@ import User from "../user/user.model";
 // Create rental request for tenant
 const createRentalRequest = async (tenantId: string, listingId: string, additionalMessage: string) => {
   try {
-    // Find the user by ID (tenant)
+    // Find the tenant by ID
     const tenant = await User.findById(tenantId);
     if (!tenant || tenant.role !== "tenant") {
       throw new NotFoundError("Tenant not found or user is not a tenant");
     }
 
+    // Find the listing by ID
+    const listing = await ListingModel.findById(listingId);
+    if (!listing) {
+      throw new NotFoundError("Listing not found");
+    }
+
     // Create a rental request object
     const rentalRequest = {
-      listingId: listingId,
+      tenantId: tenantId,
       status: "pending" as "pending" | "approved" | "rejected",
-      additionalMessage: additionalMessage
+      additionalMessage: additionalMessage,
     };
 
-    // Ensure rentalRequests is initialized
+    // Ensure rentalRequests is initialized in the listing
+    if (!listing.requests) {
+      listing.requests = []; // Initialize if undefined
+    }
+
+    // Add the rental request to the listing's requests array
+    listing.requests.push(rentalRequest);
+
+    // Save the updated listing
+    await listing.save();
+
+    // Ensure rentalRequests is initialized in the tenant (if not already done)
     if (!tenant.rentalRequests) {
-      tenant.rentalRequests = []; // Initialize if undefined
+      tenant.rentalRequests = [];
     }
 
     // Add the rental request to the tenant's rentalRequests array
-    tenant.rentalRequests.push(rentalRequest);
+    tenant.rentalRequests.push({
+      listingId: listingId,
+      status: "pending", // default status
+      additionalMessage: additionalMessage,
+    });
 
-    // Save the updated tenant object
+    // Save the updated tenant
     await tenant.save();
 
-    return rentalRequest;
+    return rentalRequest; // Return the created rental request
   } catch (error) {
     console.error(error);
     throw new BadRequestError("Error creating rental request");
   }
 };
+
+
+const getAllRentalRequests = async () => {
+  try {
+    // Find all users with role "tenant"
+    const tenants = await User.find({ role: "tenant" });
+
+    // Extract rental requests from each tenant
+    const allRentalRequests = tenants.flatMap(tenant =>
+      tenant?.rentalRequests?.map(request => ({
+        tenantId: tenant._id,
+        tenantName: tenant.name, // Assuming user has a name field
+        tenantEmail: tenant.email,
+        ...request
+      }))
+    );
+
+    return allRentalRequests;
+  } catch (error) {
+    throw new BadRequestError("Error retrieving rental requests");
+  }
+};
+
 
 // Get all rental requests made by a tenant
 const getRentalRequests = async (tenantId: string) => {
@@ -79,6 +125,19 @@ const getRentalRequests = async (tenantId: string) => {
   } catch (error) {
     throw error; // Re-throw to be handled by the controller
   }
+};
+
+const updateTenantProfile = async (tenantId: string, updateData: any) => {
+  const tenant = await User.findById(tenantId);
+
+  if (!tenant || tenant.role !== "tenant") {
+      throw new Error("Tenant not found or not authorized to update");
+  }
+
+  Object.assign(tenant, updateData); // Update only provided fields
+  await tenant.save();
+
+  return tenant;
 };
 
 // Update tenant profile
@@ -99,5 +158,6 @@ export const TenantService = {
   // getTenantProfile,
   createRentalRequest,
   getRentalRequests,
-  // updateTenantProfile,
+  getAllRentalRequests,
+  updateTenantProfile,
 };

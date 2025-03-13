@@ -1,6 +1,11 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Request, Response } from "express";
+import catchAsync from "../../utils/catchAsync";
 import { LandlordListing } from "./landLord.interface";
 import ListingModel from "./landLord.model";
+import sendResponse from "../../utils/sendResponse";
+import { StatusCodes } from "http-status-codes";
+import mongoose from "mongoose";
 
 
 // Create a new rental house listing
@@ -10,10 +15,11 @@ const createListing = async (payload: LandlordListing) => {
 };
 
 // Retrieve all listings posted by a specific landlord
-const getAllListings = async (landlordId: string) => {
-    const listings = await ListingModel.find({ landlordId }).populate("landlordId");
-    return listings;
+
+export const getAllListings = async (filter: Record<string, any>) => {
+    return await ListingModel.find(filter); // Fetch listings based on filter
 };
+
 
 // Update a specific rental listing by ID
 const updateListing = async (id: string, payload: LandlordListing) => {
@@ -27,21 +33,56 @@ const deleteListing = async (id: string) => {
     return { message: "Listing deleted successfully" };
 };
 
-// Retrieve all rental requests for the landlord's listings
-const getAllRentalRequests = async (landlordId: string) => {
-    const listings = await ListingModel.find({ landlordId }).populate("landlordId");
-    const rentalRequests = listings.flatMap((listing) => listing.requests); // Assuming requests are stored in the listing model
+const getRentalRequests = async (landlordId: string) => {
+    // Fetch all listings owned by the landlord
+    const listings = await ListingModel.find({ landlordId }).populate({
+        path: "requests.tenantId", // Populate tenant details
+        model: "User",
+        select: "name email phone" // Only retrieve necessary fields
+    });
+
+    if (!listings.length) {
+        throw new Error("No listings found for this landlord");
+    }
+
+    // Extract all rental requests from listings
+    const rentalRequests = listings.flatMap((listing) =>
+        listing.requests.map((request) => ({
+            listingId: listing._id,
+            listingLocation: listing.location,
+            rentAmount: listing.rentAmount,
+            status: request.status,
+            tenant: request.tenantId, // Populated tenant details
+            phoneNumber: request.phoneNumber || "N/A",
+        }))
+    );
+
     return rentalRequests;
 };
 
+
 // Respond to a rental request (approve/reject)
-const respondToRentalRequest = async (
-    requestId: string,
-    status: string,
-    phoneNumber?: string
-) => {
-    const request = await ListingModel.findOneAndUpdate(
-        { "requests._id": requestId },
+export const respondToRentalRequest = catchAsync(async (req: Request, res: Response) => {
+    const { requestId } = req.params;
+    const { status, phoneNumber } = req.body;
+
+    // Ensure status is either 'approved' or 'rejected'
+    if (!["approved", "rejected"].includes(status)) {
+        return sendResponse(res, {
+            status: false,
+            message: "Invalid status. Use 'approved' or 'rejected'.",
+            statusCode: StatusCodes.BAD_REQUEST,
+            data: null,
+        });
+    }
+
+    // Convert requestId to ObjectId
+    const objectIdRequestId = new mongoose.Types.ObjectId(requestId);
+    console.log("RequestId:", objectIdRequestId); // Debugging log
+
+    // Find and update the rental request in the listing
+    const updatedListing = await ListingModel.findOneAndUpdate(
+        { "requests._id": objectIdRequestId },
         {
             $set: {
                 "requests.$.status": status,
@@ -51,18 +92,33 @@ const respondToRentalRequest = async (
         { new: true }
     );
 
-    if (!request) {
-        throw new Error("Rental request not found.");
+    console.log("Updated Listing:", updatedListing); // Debugging log
+
+    // If no listing was found or updated
+    if (!updatedListing) {
+        return sendResponse(res, {
+            status: false,
+            message: "Rental request not found.",
+            statusCode: StatusCodes.NOT_FOUND,
+            data: null,
+        });
     }
 
-    return request;
-};
+    // Return success response
+    sendResponse(res, {
+        status: true,
+        message: `Rental request has been ${status}.`,
+        statusCode: StatusCodes.OK,
+        data: updatedListing,
+    });
+});
+
 
 export const LandlordService = {
     createListing,
     getAllListings,
     updateListing,
     deleteListing,
-    getAllRentalRequests,
+    getRentalRequests,
     respondToRentalRequest,
 };
