@@ -11,7 +11,7 @@ const app: Application = express();
 const allowedOrigins = [
   "https://bike-store-front.vercel.app",
   // "https://bike-store-blush.vercel.app",
-  "http://localhost:5173"
+  "http://localhost:3000"
 ];
 
 app.use(cookieParser());

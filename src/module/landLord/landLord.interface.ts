@@ -6,6 +6,7 @@ export interface LandlordListing {
   rentAmount: number; // Rent amount in currency
   numberOfBedrooms: number; // Number of bedrooms in the rental house
   images: string[]; // Array of image URLs for the rental house
+  amenities: string;
   landlordId: string; // Reference to the landlord (user) ID
   requests?: {
     status: "pending" | "approved" | "rejected";

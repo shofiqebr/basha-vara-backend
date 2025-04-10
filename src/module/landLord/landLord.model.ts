@@ -26,6 +26,9 @@ const ListingSchema: Schema = new Schema(
       type: [String], // Array of image URLs
       required: true,
     },
+    amenities: {
+      type: String
+    },
     landlordId: {
       type: mongoose.Schema.Types.ObjectId, // Reference to the User collection (Landlord)
       ref: "User", // Assuming you have a 'User' collection for Landlords

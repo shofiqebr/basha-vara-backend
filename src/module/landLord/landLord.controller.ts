@@ -20,6 +20,7 @@ const createListing = catchAsync(async (req: Request, res: Response) => {
             rentAmount: result.rentAmount,
             numberOfBedrooms: result.numberOfBedrooms,
             images: result.images,
+            amenities: result.amenities,
             landlordId: result.landlordId,
         }
     });

@@ -49,10 +49,12 @@ const login = catchAsync(async (req: Request, res: Response) => {
             _id: result.user._id,
             name: result.user.name,
             email: result.user.email,
+            username: result.user.name,  // Include username
             role: result.user.role,
         }
     });
 });
+
 
 const logout = catchAsync(async (req: Request, res: Response) => {
     res.clearCookie("token");
