@@ -8,6 +8,13 @@ export interface RentalRequest {
     landlordPhoneNumber?: string; // Landlord's phone number (provided upon approval)
     paymentStatus?: "paid" | "pending"; // Payment status (only applicable for approved requests)
     additionalMessage?: string; // Additional message or information provided by the tenant
+
+    rentalRequests?: {
+      listingId: string;
+      status: "pending" | "approved" | "rejected";
+      additionalMessage?: string;
+      landlordPhoneNumber?: string;
+    }[]; // Track rental requests made by tenant,
     createdAt?: Date; // Date of request creation
     updatedAt?: Date; // Date of last update
   }
@@ -28,4 +35,13 @@ export interface RentalRequest {
     profile: TenantProfile; // Profile of the tenant
     rentalRequests: RentalRequest[]; // Rental requests made by the tenant
   }
+
+  export interface UpdateRentalRequestInput {
+    tenantId: string;
+    listingId: string;
+    additionalMessage?: string;
+    landlordPhoneNumber?: string;
+    status?: "pending" | "approved" | "rejected";
+  }
+  
   

@@ -4,6 +4,7 @@ import { TenantService } from "./tenant.service";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { BadRequestError, NotFoundError } from "../../errors/errors";
+// import {updateRentalRequest } from './tenant.service'
 
 // import { TenantService } from "./Tenant.service"; // Assuming you have a Tenant service for logic
 // import { NotFoundError, BadRequestError } from "../../../utils/errors"; // Import your custom errors
@@ -105,6 +106,22 @@ const getRentalRequests = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const updateRentalRequestController = catchAsync(
+    async (req: Request, res: Response) => {
+      const { tenantId, listingId } = req.params;
+      const { additionalMessage, status } = req.body;
+  
+      const updated = await TenantService.updateRentalRequest(tenantId, listingId, {
+        tenantId,
+        listingId,
+        additionalMessage,
+        status,
+      });
+  
+      res.status(200).json(updated);
+    }
+  );
+
 const updateTenantProfile = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const { tenantId, ...updateData } = req.body;
 
@@ -158,4 +175,5 @@ export const TenantControllers = {
     updateTenantProfile,
     // updateRentalRequest,
     // deleteRentalRequest,
+    updateRentalRequestController
 };

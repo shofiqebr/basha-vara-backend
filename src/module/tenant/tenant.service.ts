@@ -5,6 +5,7 @@
 import { BadRequestError, NotFoundError } from "../../errors/errors";
 import ListingModel from "../landLord/landLord.model";
 import User from "../user/user.model";
+import { UpdateRentalRequestInput } from "./tenant.interface";
 // import { Tenant } from "./tenant.interface";
 // import TenantModel from "./tenant.model";
 
@@ -112,6 +113,55 @@ const getAllRentalRequests = async () => {
   }
 };
 
+// update rental request
+
+const updateRentalRequest = async (
+  tenantId: string,
+  listingId: string,
+  updateData: UpdateRentalRequestInput
+) => {
+  const tenant = await User.findById(tenantId);
+
+  if (!tenant || tenant.role !== "tenant") {
+    throw new NotFoundError("Tenant not found or invalid role");
+  }
+
+  // Ensure rentalRequests is initialized
+  if (!tenant.rentalRequests) {
+    tenant.rentalRequests = [];
+  }
+
+  // Find the request to update
+  const tenantRequest = tenant.rentalRequests.find(
+    (req) => req.listingId.toString() === listingId
+  );
+
+  if (!tenantRequest) {
+    throw new NotFoundError("Rental request not found in tenant");
+  }
+
+  // Update fields if provided
+  if (updateData.additionalMessage !== undefined) {
+    tenantRequest.additionalMessage = updateData.additionalMessage;
+  }
+
+  if (updateData.status !== undefined) {
+    tenantRequest.status = updateData.status;
+  }
+
+  if (updateData?.landlordPhoneNumber !== undefined) {
+    tenantRequest.landlordPhoneNumber = updateData?.landlordPhoneNumber;
+  }
+
+  await tenant.save();
+
+  return {
+    message: "Rental request updated successfully",
+    updatedRequest: tenantRequest,
+  };
+};
+
+
 
 // Get all rental requests made by a tenant
 const getRentalRequests = async (tenantId: string) => {
@@ -160,4 +210,5 @@ export const TenantService = {
   getRentalRequests,
   getAllRentalRequests,
   updateTenantProfile,
+  updateRentalRequest
 };

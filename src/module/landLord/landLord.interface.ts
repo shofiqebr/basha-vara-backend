@@ -9,6 +9,7 @@ export interface LandlordListing {
   amenities: string;
   landlordId: string; // Reference to the landlord (user) ID
   requests?: {
+    [x: string]: string;
     status: "pending" | "approved" | "rejected";
     tenantId: string; // Tenant's user ID
     phoneNumber?: string; // Landlord's phone number (optional)

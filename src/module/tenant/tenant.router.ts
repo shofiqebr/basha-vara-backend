@@ -18,6 +18,8 @@ tenantRouter.post("/api/tenants/requests", TenantControllers.createRentalRequest
 // tenantRouter.get("/api/tenants/requests", TenantControllers.getRentalRequests);
 tenantRouter.get("/api/tenants/requests", TenantControllers.getAllRentalRequests);
 
+tenantRouter.put("/api/tenants/requests/:tenantId/:listingId", TenantControllers.updateRentalRequestController);
+
 tenantRouter.put("/api/tenants/profile", TenantControllers.updateTenantProfile);
 
 // Update tenant profile
