@@ -24,6 +24,7 @@ const UserSchema = new Schema<IUser, mongoose.Model<IUser, {}, IUserMethods>, IU
     phone: { type: String },
     address: { type: String, default: "N/A" },
     city: { type: String, default: "N/A" },
+    isActive: {type: Boolean, default: "Active"},
     
     // Add rentalRequests field for tenants
     rentalRequests: [

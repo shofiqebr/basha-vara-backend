@@ -10,6 +10,7 @@ export interface IUser {
   role: "admin" | "landlord" | "tenant"; // Tenant role
   address?: string;
   city?: string;
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
   
