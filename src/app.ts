@@ -4,6 +4,7 @@ import authRouter from './module/auth/auth.router';
 import cookieParser from "cookie-parser";
 import tenantRouter from './module/tenant/tenant.router';
 import landlordRouter from './module/landLord/landLord.router';
+import adminRouter from './module/admin/admin.router';
 
 const app: Application = express();
 
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use(authRouter);
+app.use(adminRouter);
 app.use(tenantRouter);
 app.use(landlordRouter);
 

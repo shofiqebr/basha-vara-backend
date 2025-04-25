@@ -1,14 +1,10 @@
+
 import config from "../../app/config";
+
 import { IUser } from "../user/user.interface";
 import User from "../user/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-// const register = async (payload: IUser) => {
-//     const hashedPassword = await bcrypt.hash(payload.password, 10);
-//     const user = await User.create({ ...payload, password: hashedPassword });
-//     return user;
-// };
 
 const register = async( payload: IUser) => {
     const result = await User.create(payload)
@@ -19,6 +15,26 @@ const getAllUsers = async () => {
     const users = await User.find();
     return users;
 };
+
+const updateUser = async (id: string, payload: Partial<IUser>) => {
+    const updatedUser = await User.findByIdAndUpdate(id, payload, {
+      new: true, // returns the updated document
+      runValidators: true,
+    });
+  
+    if (!updatedUser) {
+      throw new Error("User not updated!");
+    }
+  
+    return updatedUser;
+  };
+
+  const deleteUser = async (id: string) => {
+    const result = await User.findByIdAndDelete(id);
+    return result;
+  };
+  
+  
 
 const login = async (payload: { email: string; password: string }) => {
     const user = await User.findOne({ email: payload?.email }).select("+password");
@@ -53,5 +69,7 @@ const login = async (payload: { email: string; password: string }) => {
 export const AuthService = {
     register,
     getAllUsers,
+    updateUser,
+    deleteUser,
     login,
 };
