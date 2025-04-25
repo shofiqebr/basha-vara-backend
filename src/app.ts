@@ -8,27 +8,36 @@ import adminRouter from './module/admin/admin.router';
 
 const app: Application = express();
 
-// Allow multiple origins dynamically
-const allowedOrigins = [
-  "https://bike-store-front.vercel.app",
-  // "https://bike-store-blush.vercel.app",
-  "http://localhost:3000"
-];
+app.use(
+  cors({
+    origin: ['https://basha-vara-frontend.vercel.app'],
+    credentials: true,
+  }),
+);
+
+// // Allow multiple origins dynamically
+// const allowedOrigins = [
+//   "https://basha-vara-frontend.vercel.app",
+//   // "https://bike-store-blush.vercel.app",
+//   // "http://localhost:3000"
+// ];
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      // Allow requests from allowed origins
-      callback(null, true);
-    } else {
-      // Reject requests from other origins
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true, // Allow cookies with cross-origin requests
-}));
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       // Allow requests from allowed origins
+//       callback(null, true);
+//     } else {
+//       // Reject requests from other origins
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true, // Allow cookies with cross-origin requests
+// }));
+
+
 app.use(express.urlencoded({ extended: true }));
 
 

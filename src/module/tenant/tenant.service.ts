@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-useless-catch */
 
+import mongoose from "mongoose";
 import { BadRequestError, NotFoundError } from "../../errors/errors";
 import ListingModel from "../landLord/landLord.model";
 import User from "../user/user.model";
@@ -40,55 +41,66 @@ import { UpdateRentalRequestInput } from "./tenant.interface";
 const createRentalRequest = async (
   tenantId: string,
   listingId: string,
-  additionalMessage: string
+  additionalMessage: string,
+  moveInDate?: string,
+  rentalDuration?: string,
+  specialRequirements?: string
 ) => {
   try {
-    // Find tenant
     const tenant = await User.findById(tenantId);
     if (!tenant || tenant.role !== "tenant") {
       throw new NotFoundError("Tenant not found or user is not a tenant");
     }
 
-    // Find listing
     const listing = await ListingModel.findById(listingId);
     if (!listing) {
       throw new NotFoundError("Listing not found");
     }
 
-    const landlordId = listing.landlordId; // 👈 Extract landlordId from listing
+    const landlordId = listing.landlordId;
     if (!landlordId) {
       throw new BadRequestError("Landlord ID not found in listing");
     }
 
     const rentalRequest = {
       tenantId,
-      landlordId, // 👈 Save landlordId in the request
+      landlordId,
       listingId,
       status: "pending" as const,
       additionalMessage,
+      // Provide default empty strings for optional fields
+      moveInDate: moveInDate ?? "",
+      rentalDuration: rentalDuration ?? "",
+      specialRequirements: specialRequirements ?? "",
+      phoneNumber: (tenant as any).phoneNumber ?? "" 
     };
 
-    // Initialize if needed and push to listing
+    // Add to listing
     if (!listing.requests) listing.requests = [];
     listing.requests.push(rentalRequest);
     await listing.save();
 
-    // Also add to tenant side
+    // Add to tenant
     if (!tenant.rentalRequests) tenant.rentalRequests = [];
     tenant.rentalRequests.push({
       listingId,
-      landlordId, // 👈 Save landlordId here too
+      landlordId,
       status: "pending",
       additionalMessage,
+      moveInDate,
+      rentalDuration,
+      specialRequirements,
+      _id: new mongoose.Types.ObjectId(),
     });
     await tenant.save();
 
     return rentalRequest;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     throw new BadRequestError("Error creating rental request");
   }
 };
+
 
 
 
@@ -167,7 +179,7 @@ const updateRentalRequest = async (
 const getRentalRequests = async (tenantId: string) => {
   try {
     const tenant = await User.findById(tenantId);
-    console.log(tenantId, tenant)
+    // console.log(tenantId, tenant)
     if (!tenant) {
       throw new NotFoundError("Tenant not found");
     }

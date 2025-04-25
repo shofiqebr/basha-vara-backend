@@ -34,6 +34,9 @@ const RentalRequestSchema: Schema = new Schema(
     additionalMessage: {
       type: String,
     },
+    moveInDate: {type: String},
+    rentalDuration: {type: String},
+    specialRequirements: {type: String}
   },
   { timestamps: true }
 );

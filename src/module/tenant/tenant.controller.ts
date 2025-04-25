@@ -53,34 +53,50 @@ import { BadRequestError, NotFoundError } from "../../errors/errors";
 
 // Controller for creating a rental request
 const createRentalRequest = catchAsync(async (req: Request, res: Response) => {
-    const { tenantId, listingId, additionalMessage } = req.body;
-    
+    const {
+      tenantId,
+      listingId,
+      additionalMessage,
+      moveInDate,
+      rentalDuration,
+      specialRequirements,
+    } = req.body;
+  
     try {
-        const rentalRequest = await TenantService.createRentalRequest(tenantId, listingId, additionalMessage);
-        sendResponse(res, {
-            status: true,
-            message: "Rental request created successfully",
-            statusCode: StatusCodes.CREATED,
-            data: rentalRequest,
-        });
+      const rentalRequest = await TenantService.createRentalRequest(
+        tenantId,
+        listingId,
+        additionalMessage,
+        moveInDate,
+        rentalDuration,
+        specialRequirements
+      );
+  
+      sendResponse(res, {
+        status: true,
+        message: "Rental request created successfully",
+        statusCode: StatusCodes.CREATED,
+        data: rentalRequest,
+      });
     } catch (error) {
-        if (error instanceof NotFoundError || error instanceof BadRequestError) {
-            sendResponse(res, {
-                status: false,
-                message: error.message,
-                statusCode: error.statusCode,
-                data: {},  // Empty object to satisfy the type
-            });
-        } else {
-            sendResponse(res, {
-                status: false,
-                message: "Internal Server Error",
-                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                data: {},  // Empty object to satisfy the type
-            });
-        }
+      if (error instanceof NotFoundError || error instanceof BadRequestError) {
+        sendResponse(res, {
+          status: false,
+          message: error.message,
+          statusCode: error.statusCode,
+          data: {},
+        });
+      } else {
+        sendResponse(res, {
+          status: false,
+          message: "Internal Server Error",
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          data: {},
+        });
+      }
     }
-});
+  });
+  
 
 const getAllRentalRequests = catchAsync(async (req: Request, res: Response) => {
     const result = await TenantService.getAllRentalRequests();

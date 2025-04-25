@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from "express";
-import catchAsync from "../../utils/catchAsync";
+
+
 import { LandlordListing } from "./landLord.interface";
 import ListingModel from "./landLord.model";
-import sendResponse from "../../utils/sendResponse";
+
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import User from "../user/user.model";
@@ -50,7 +51,7 @@ const getRentalRequests = async (landlordId: string) => {
 
     // Extract all rental requests from listings
     const rentalRequests = listings.flatMap((listing) =>
-        listing.requests.map((request) => ({
+        listing?.requests?.map((request) => ({
             listingId: listing._id,
             listingLocation: listing.location,
             rentAmount: listing.rentAmount,

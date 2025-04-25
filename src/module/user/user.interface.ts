@@ -23,6 +23,9 @@ export interface IUser {
     additionalMessage?: string;
     landlordPhoneNumber?: string;
     phoneNumber?: string;
+    moveInDate?: string;
+    rentalDuration?: string;
+    specialRequirements?: string;
   }[]; // Track rental requests made by tenant
 }
 

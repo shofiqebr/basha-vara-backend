@@ -13,11 +13,16 @@ export interface RentalRequest {
     additionalMessage?: string; // Additional message or information provided by the tenant
 
     rentalRequests?: {
-      listingId: string;
-      landlordId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      status: "pending" | "approved" | "rejected";
-      additionalMessage?: string;
-      landlordPhoneNumber?: string;
+       _id: mongoose.Types.ObjectId;
+          listingId: string;
+          landlordId:string;
+          status: "pending" | "approved" | "rejected";
+          additionalMessage?: string;
+          landlordPhoneNumber?: string;
+          phoneNumber?: string;
+          moveInDate?: string;
+          rentalDuration?: string;
+          specialRequirements?: string;
     }[]; // Track rental requests made by tenant,
     createdAt?: Date; // Date of request creation
     updatedAt?: Date; // Date of last update
@@ -46,6 +51,9 @@ export interface RentalRequest {
     additionalMessage?: string;
     landlordPhoneNumber?: string;
     status?: "pending" | "approved" | "rejected";
+    moveInDate?: string;
+    rentalDuration?: string;
+    specialRequirements?: string
   }
   
   

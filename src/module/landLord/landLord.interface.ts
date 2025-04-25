@@ -9,10 +9,10 @@ export interface LandlordListing {
   amenities: string;
   landlordId: string; // Reference to the landlord (user) ID
   requests?: {
-    [x: string]: string;
+    [x: string]: string | undefined;
     status: "pending" | "approved" | "rejected";
     tenantId: string; // Tenant's user ID
-    phoneNumber?: string | undefined; // Landlord's phone number (optional)
+    phoneNumber?: string ; // Landlord's phone number (optional)
   }[]; 
   createdAt?: Date; // Optional, the date the listing was created
   updatedAt?: Date; // Optional, the date the listing was last updated

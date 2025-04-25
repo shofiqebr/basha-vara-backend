@@ -43,6 +43,9 @@ const UserSchema = new Schema<IUser, mongoose.Model<IUser, {}, IUserMethods>, IU
         additionalMessage: { type: String },
         landlordPhoneNumber: { type: String },
         phoneNumber: { type: String },
+        moveInDate: {type: String},
+        rentalDuration: {type: String},
+        specialRequirements: {type: String}
       }
     ],
   },
