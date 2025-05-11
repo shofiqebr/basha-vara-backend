@@ -7,6 +7,7 @@ export interface LandlordListing {
   numberOfBedrooms: number; // Number of bedrooms in the rental house
   images: string[]; // Array of image URLs for the rental house
   amenities: string;
+  category: "Familiy" | "Bachelor" | "Office" | 'Sublet' | 'Hostel'
   landlordId: string; // Reference to the landlord (user) ID
   requests?: {
     [x: string]: string | undefined;

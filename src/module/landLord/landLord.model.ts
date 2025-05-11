@@ -29,6 +29,9 @@ const ListingSchema: Schema = new Schema(
     amenities: {
       type: String
     },
+    category: {
+       type: String, enum: ['Family', 'Bachelor', 'Office', 'Sublet', 'Hostel'], default: 'Family'
+    },
     landlordId: {
       type: mongoose.Schema.Types.ObjectId, // Reference to the User collection (Landlord)
       ref: "User", // Assuming you have a 'User' collection for Landlords
