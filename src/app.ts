@@ -10,7 +10,8 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    // origin: ['http://localhost:3000'],
+    origin: ['https://basha-vara-frontend.vercel.app'],
     credentials: true,
   }),
 );
